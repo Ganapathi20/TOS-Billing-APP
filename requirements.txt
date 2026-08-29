@@ -1,0 +1,16 @@
+# TOS Automation Framework — Python Dependencies
+Appium-Python-Client==3.1.0
+selenium==4.15.0
+pytest==7.4.3
+pytest-html==4.1.1
+pytest-xdist==3.5.0
+pytest-ordering==0.6
+Pillow==10.1.0
+pytesseract==0.3.10
+opencv-python==4.8.1.78
+requests==2.31.0
+websocket-client==1.7.0
+python-dotenv==1.0.0
+pyyaml==6.0.1
+allure-pytest==2.13.2
+retry==0.9.2

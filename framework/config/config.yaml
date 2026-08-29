@@ -1,0 +1,75 @@
+# TOS Automation — Master Configuration
+# ─────────────────────────────────────────────────────────────
+
+appium:
+  host: "http://127.0.0.1"
+  port_user:     4723          # Appium server for User device
+  port_approver: 4724          # Appium server for Approver device
+
+devices:
+  user:
+    udid:         "emulator-5554"
+    platform:     "Android"
+    version:      "13.0"
+    app_package:  "com.towers.onlineservices"
+    app_activity: ".ui.splash.SplashActivity"
+    automation:   "UiAutomator2"
+    no_reset:     false
+    new_command_timeout: 300
+    unicode_keyboard: true
+    reset_keyboard:   true
+
+  approver:
+    udid:         "emulator-5556"
+    platform:     "Android"
+    version:      "13.0"
+    app_package:  "com.towers.onlineservices"
+    app_activity: ".ui.splash.SplashActivity"
+    automation:   "UiAutomator2"
+    no_reset:     false
+    new_command_timeout: 300
+    unicode_keyboard: true
+    reset_keyboard:   true
+
+timeouts:
+  implicit_wait:       10      # seconds
+  explicit_wait:       30      # seconds for conditions
+  network_wait:        45      # seconds for API / background jobs
+  notification_wait:   20      # seconds for push notification
+
+test_data:
+  static_otp: "111111"         # Dev-mode OTP bypass
+  user_mobile_iter1: "9876500001"
+  user_mobile_iter2: "9876500002"
+  approver_mobile: "9876599999"
+  payment_amount_iter1: "500"
+  payment_amount_iter2: "1200"
+  upi_id_iter1: "testuser1@upi"
+  upi_id_iter2: "testuser2@upi"
+  user_name_iter1: "Test User One"
+  user_name_iter2: "Test User Two"
+
+backend:
+  base_url: "http://10.0.2.2:8000"     # host machine from emulator
+  ws_url:   "ws://10.0.2.2:8000/ws/events"
+  api_key:  "test-api-key-12345"
+
+adb:
+  # Device-side paths where test images are pushed
+  qr_image_dest:      "/sdcard/Pictures/tos_test/qr_mock.jpg"
+  proof_image_dest:   "/sdcard/Pictures/tos_test/payment_proof.jpg"
+  refund_image_dest:  "/sdcard/Pictures/tos_test/refund_proof.jpg"
+  # Local paths (host machine)
+  qr_image_src:      "mock_assets/mock_qr.jpg"
+  proof_image_src:   "mock_assets/mock_payment_proof.jpg"
+  refund_image_src:  "mock_assets/mock_refund_proof.jpg"
+
+ocr:
+  tesseract_path: "/usr/bin/tesseract"
+  lang: "eng"
+  confidence_threshold: 70
+
+reports:
+  output_dir: "reports/"
+  screenshots_dir: "reports/screenshots/"
+  allure_dir:  "reports/allure-results/"
