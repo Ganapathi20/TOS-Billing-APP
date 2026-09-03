@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  APPROVER
+}
+
+enum PaymentMethod {
+  UPI_ID
+  QR_UPLOAD
+}
+
+enum TransactionStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  REFUNDED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  mobile    String   @unique
+  role      Role
+  createdAt DateTime @default(now())
+
+  submittedTransactions Transaction[] @relation("UserTransactions")
+  reviewedTransactions  Transaction[] @relation("ApproverTransactions")
+}
+
+model Otp {
+  id        String   @id @default(cuid())
+  mobile    String
+  code      String
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([mobile])
+}
+
+model Transaction {
+  id           String             @id @default(cuid())
+  amount       Int
+  method       PaymentMethod
+  upiId        String?
+  qrImage      String?
+  proofImage   String?
+  refundImage  String?
+  status       TransactionStatus  @default(PENDING_APPROVAL)
+  chargesFee   Int
+  chargesTotal Int
+  note         String?
+  decisionNote String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  userId     String
+  user       User    @relation("UserTransactions", fields: [userId], references: [id])
+  approverId String?
+  approver   User?   @relation("ApproverTransactions", fields: [approverId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+}
