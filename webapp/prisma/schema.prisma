@@ -3,8 +3,17 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Pooled connection (PgBouncer) — used by the running app, where many
+  // short-lived serverless invocations need to share a small pool.
+  url       = env("DATABASE_URL")
+  // Direct, unpooled connection — used only for `prisma migrate deploy`.
+  // Running schema migrations through a transaction-mode pooler like
+  // PgBouncer can break Prisma's advisory locks, so migrations need a
+  // direct line to Postgres. Both env vars must be set even locally
+  // (against a plain Postgres with no pooler, they're just the same
+  // value) — Prisma errors at build time if either is missing.
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
