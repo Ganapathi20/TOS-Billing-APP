@@ -17,20 +17,37 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
+  async function sendOtp(mobileNumber: string) {
+    const res = await fetch("/api/auth/otp/request", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mobile: mobileNumber }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? "Could not send code");
+    return data.devOtp as string;
+  }
+
   async function requestOtp(e: FormEvent) {
     e.preventDefault();
     setError("");
     setBusy(true);
     try {
-      const res = await fetch("/api/auth/otp/request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mobile }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Could not send code");
-      setDevOtp(data.devOtp);
+      setDevOtp(await sendOtp(mobile));
       setStep("code");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resendOtp() {
+    setError("");
+    setBusy(true);
+    try {
+      setDevOtp(await sendOtp(mobile));
+      setCode("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -153,17 +170,27 @@ export default function LoginPage() {
             >
               {busy ? "Verifying…" : needsProfile ? "Create account & sign in" : "Verify & sign in"}
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                setStep("mobile");
-                setNeedsProfile(false);
-                setError("");
-              }}
-              className="text-sm text-foreground-soft underline underline-offset-2"
-            >
-              Use a different number
-            </button>
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={resendOtp}
+                disabled={busy}
+                className="text-sm text-accent underline underline-offset-2 disabled:opacity-60"
+              >
+                Resend code
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setStep("mobile");
+                  setNeedsProfile(false);
+                  setError("");
+                }}
+                className="text-sm text-foreground-soft underline underline-offset-2"
+              >
+                Use a different number
+              </button>
+            </div>
           </form>
         )}
       </div>
