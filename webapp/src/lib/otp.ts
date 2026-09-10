@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 
-const OTP_TTL_MINUTES = 5;
+// 15 minutes, not 5 — a first-time signup also has to read the "demo
+// mode" explanation, type a name, and pick a role before submitting.
+const OTP_TTL_MINUTES = 15;
 
 export function normalizeMobile(raw: string) {
   return raw.replace(/\D/g, "").slice(-10);
