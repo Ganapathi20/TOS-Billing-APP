@@ -124,6 +124,27 @@ payment, the database is wired up correctly.
 Every subsequent `git push` to the connected branch redeploys and re-runs
 any new migrations automatically.
 
+## Testing without login
+
+To click through the app without going through OTP sign-in each time, set
+the `SKIP_AUTH` environment variable to `"true"` (locally in `.env`, or in
+Vercel's Environment Variables + redeploy). With it set:
+
+- Visiting the site lands you straight on the Resident dashboard, signed in
+  as a seeded "Test Resident" account — no phone number needed.
+- A **"Switch to Approver view"** / **"Switch to Resident view"** link
+  appears next to Sign out, swapping between the two seeded test accounts
+  (Test Resident and Test Approver) with one click — handy for testing the
+  full submit → approve → refund loop back and forth.
+- A yellow **TEST MODE** banner appears across the top as a reminder it's on.
+
+**Turn it back off before anyone but you uses the app** — set `SKIP_AUTH`
+back to `"false"` (or delete the variable) and redeploy. It's a real
+authentication bypass: anyone who can reach the site while it's on can sign
+in as either role with no verification at all. The route it relies on
+(`/api/test/login`) returns a 404 by itself whenever the variable isn't
+exactly `"true"`, so leaving it unset is safe by default.
+
 ## Auth
 
 There's no SMS provider wired up, so `POST /api/auth/otp/request` returns

@@ -10,7 +10,7 @@ export default async function ApproverPage() {
 
   return (
     <>
-      <TopNav name={session.name} role={session.role} />
+      <TopNav name={session.name} role={session.role} testMode={process.env.SKIP_AUTH === "true"} />
       <ApproverDashboard />
     </>
   );
